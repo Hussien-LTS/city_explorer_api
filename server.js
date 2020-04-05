@@ -1,4 +1,6 @@
 'use strict'
+
+///////////////////////////////////////////////////////////////////////
 const express = require('express');
 
 const cors = require('cors');
@@ -13,7 +15,7 @@ server.use(cors());
 
 
 
-/////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 server.get('/location', (req, res) => {
     const geoData = require('./data/geo.json');
     const city = req.query.city;
@@ -22,7 +24,7 @@ server.get('/location', (req, res) => {
     
 })
 
-///////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 function Location (city,geoData) {
     this.search_query = city;
     this.formatted_query = geoData[0].display_name;
@@ -31,7 +33,7 @@ function Location (city,geoData) {
     
 }
 
-///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 server.get('/weather', (req,res) =>{
     
@@ -40,16 +42,17 @@ server.get('/weather', (req,res) =>{
     weatherData.data.forEach((val,index) =>{
         let city = req.query.city;
         let description = val.weather.description;
-        let data = val.valid_date
+        let data = val.datetime;
         let weatherData2 = new Weather (description, data, city);
         allArr.push(weatherData2);
         onErorr();
+
     })
     res.send(allArr);
     
 });
     
-///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 function Weather (description, data ,city){
     this.search_query = city;
     this.description = description;
@@ -58,18 +61,19 @@ function Weather (description, data ,city){
     
 }
 
-////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
 
 server.listen(PORT, () =>{
     console.log(`listening on PORT ${PORT}`);
-})
+});
 
 
-///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
 
 function onErorr(){
-    
-    server.use((req, res) => {
-        res.status(500).send('Sorry, something went wrong')
-    });
+
+        server.use((req, res) => {
+            res.status(500).send('Sorry, something went wrong')
+});
+  
 }
