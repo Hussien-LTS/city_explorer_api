@@ -87,63 +87,36 @@ function Weather(description, data, city) {
 ////////////////////////////////////////////////////////////////////////
 
 
+
 server.get('/trails', (req, res) => {
-    let key = process.env.TRAIL_API_KEY
-    let id = req.query.id
-    console.log('ssssssssssssssssssssssssssssssssssss',id);
-    
-    // let city = city;
-    // let formatted_query = req.query.formatted_query
-    // let latitude = req.query.latitude;
-    // let longitude = req.query.longitude;
-
-    const url = `https://www.hikingproject.com/data/get-trails-by-id?ids=${id}&key=${key}`;
-    // const url = `https://www.hikingproject.com/data/get-trails?${id}&maxDistance=10&key=${key}`
-    console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz',url);
-    
-    let trailsAllArr = [];
+    let trailsAllArry=[];
+    const key=process.env.TRAIL_API_KEY;
+    const lat = req.query.latitude;
+    const lon = req.query.longitude;
+    const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=200&key=${key}`;
     superagent.get(url)
-    .then(trailsData =>{
-        // console.log('wwwwwwwwwwwwwwwwww', trailsData)
+    .then(data =>{
+        data.body.trails.map(element =>{
+            const trial = new Trial(element);
+            trailsAllArry.push(trial);
+        });
+        res.send(trailsAllArry);
+    });
 
-        trailsData.body.data.map((val, index) => {
-
-                let name = val.trails.name;
-                let location = val.trails.location;
-                let length = val.trails.length;
-                let stars = val.trails.stars;
-                let star_votes = val.trails.star_votes;
-                let summary = val.trails.summary;
-                let trail_url = val.trails.url;
-                let conditions = val.trails.conditions;
-                let condition_date = val.trails.conditionDate;
-                let condition_time = val.trails.conditionDate;
-
-                var trailsData = new trails(name, location, length , stars , star_votes , summary , trail_url , conditions,condition_date , condition_time );
-                weaterAllArr.push(trailsData);
-                // onErorr();
-
-            })
-            res.send(trailsAllArr);
-        })
 });
 
-
-
-
-    ///////////////////////////////////////////////////////////////////////
-    function trails(name, location, length , stars , star_votes , summary , trail_url , conditions,condition_date , condition_time) {
-        this.name = name;
-        this.location = location;
-        this.length = length;
-        this.stars = stars;
-        this.star_votes = star_votes;
-        this.summary = summary;
-        this.trail_url = trail_url;
-        this.conditions = conditions;
-        this.condition_date = condition_date;
-        this.condition_time = condition_time;
-    }
+function Trial(data){
+    this.name = data.name;
+    this.location = data.location;
+    this.length = data.length;
+    this.stars = data.stars;
+    this.starVotes = data.starVotes;
+    this.summary = data.summary;
+    this.trail_url = data.url;
+    this.conditions = data.conditionDetails;
+    this.condition_date = data.conditionDate.substring(0,11);
+    this.condition_time = data.conditionDate.substring(11);
+}
 
     ///////////////////////////////////////////////////////////////////////
     server.listen(PORT, () => {
