@@ -102,17 +102,17 @@ server.get('/weather', (req, res) => {
 
     superagent.get(url).then(weatherData => {
 
-            weatherData.body.data.map((value) => {
-                // let description = val.weather.description;
-                // let data = val.datetime;
-                var weatherData = new Weather(value);
-                weaterAllArr.push(weatherData);
-                // onErorr();
-                
-            })
-            res.send(weaterAllArr);
-          
+        weatherData.body.data.map((value) => {
+            // let description = val.weather.description;
+            // let data = val.datetime;
+            var weatherData = new Weather(value);
+            weaterAllArr.push(weatherData);
+            // onErorr();
+
         })
+        res.send(weaterAllArr);
+
+    })
 });
 
 
@@ -128,13 +128,15 @@ function Weather(value) {
 ////////////////////////////////////////////////////////////////////////
 
 
-
 server.get('/trails', (req, res) => {
     let trailsAllArry = [];
+    
     const key = process.env.TRAIL_API_KEY;
     const lat = req.query.latitude;
     const lon = req.query.longitude;
     const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=200&key=${key}`;
+    // console.log('zzzzzzzzzzzzzzzzzzzzzzzzqqqqq555555555555555qqqqqqqq',key);
+
     superagent.get(url)
         .then(data => {
             data.body.trails.map(element => {
@@ -143,10 +145,11 @@ server.get('/trails', (req, res) => {
                 onErorr()
             });
             res.send(trailsAllArry);
+
         });
 
 });
-
+///////////////////////////////////////////////////////////////////////
 function Trial(data) {
     this.name = data.name;
     this.location = data.location;
@@ -159,6 +162,50 @@ function Trial(data) {
     this.condition_date = data.conditionDate.substring(0, 11);
     this.condition_time = data.conditionDate.substring(11);
 }
+// console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+
+///////////////////////////////////////////////////////////////////////
+
+server.get('/movies', (request, res) => {
+    // let moviesAllArry = [];
+    // console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', moviesAllArry);
+
+    // console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+
+    let key = process.env.MOVIES_API_KEY;
+    const url =`https://api.themoviedb.org/3/movie/popular?api_key=${key}&language=en-US&page=1`;
+    console.log('zzzzzzzzzzzzzzzzzzzzzzzzqqqqqqqqqqqqqqqqqqqqqqqqq', key);
+    superagent.get(url)
+        .then(result => {
+            const moveiesDATA= result.body.results.map((moviesD) => {
+                return new Movies(moviesD);
+        
+            });
+            res.status(200).json(moveiesDATA);
+        });
+})
+
+function Movies(moviesD) {
+    this.title = moviesD.title;
+    this.released_on = moviesD.release_date;
+    this.total_votes = moviesD.vote_count;
+    this.average_votes = moviesD.vote_average;
+    this.popularity = moviesD.popularity;
+    this.image_url = `https://image.tmdb.org/t/p/w300_and_h450_bestv2${moviesD.poster_path}`;
+    this.overview = moviesD.overview;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////
 server.listen(PORT, () => {
