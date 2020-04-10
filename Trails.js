@@ -4,7 +4,7 @@ const superagent = require('superagent');
 /////////trails route
 
 
-server.get('/trails', (req, res) => {
+function trailshandler (req, res)  {
     let trailsAllArry = [];
 
     const key = process.env.TRAIL_API_KEY;
@@ -16,20 +16,20 @@ server.get('/trails', (req, res) => {
     superagent.get(url)
         .then(data => {
             data.body.trails.map(element => {
-                const trial = new allConstrctor.Trial(element);
+                const trial = new Trial(element);
                 trailsAllArry.push(trial);
-                allHelper.onErorr()
+                // onErorr()
             });
             res.send(trailsAllArry);
 
         });
 
-})
+}
 
 //// Trail constrctor 
 
 
-allConstrctor.Trial = function (data) {
+ function Trial (data) {
     this.name = data.name;
     this.location = data.location;
     this.length = data.length;
@@ -41,3 +41,10 @@ allConstrctor.Trial = function (data) {
     this.condition_date = data.conditionDate.substring(0, 11);
     this.condition_time = data.conditionDate.substring(11);
 }
+
+//// trails export to server.js
+
+module.exports = trailshandler;
+
+ //// on error emport to Trails.js 
+//  const onErorr = require('./server.js')
