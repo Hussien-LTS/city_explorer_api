@@ -1,12 +1,12 @@
 'use strict'
 const superagent = require('superagent');
 
-// const allConstrctor = {};
+
 
 /////////weather route
 
 
-server.get('/weather', (req, res) => {
+function weatherhandler  (req, res)  {
 
     let weaterAllArr = [];
     // const weatherData = require('./data/weather.json')
@@ -19,30 +19,30 @@ server.get('/weather', (req, res) => {
         weatherData.body.data.map((value) => {
             // let description = val.weather.description;
             // let data = val.datetime;
-            var weatherData = new allConstrctor.Weather(value);
+            var weatherData = new Weather(value);
             weaterAllArr.push(weatherData);
-            allHelper.onErorr();
+            // onErorr();
 
         })
         res.send(weaterAllArr);
 
     })
-});
+};
 
 
 //// Weather constrctor 
 
 
-allConstrctor.Weather = function(value) {
+function Weather (value) {
     this.search_query = value.city;
     this.forecast = value.weather.description;
     this.time = value.data;
 }
 
+//// weatherhandler export to server.js
 
+module.exports = weatherhandler;
 
+ //// on error emport to Weather.js 
 
-
-
-
-// module.exports = ;
+//  const onErorr = require('./server.js')

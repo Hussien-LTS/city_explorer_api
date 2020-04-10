@@ -3,11 +3,10 @@ const superagent = require('superagent');
 
 /////////loction route
 
-const allConstrctor = require('./constrctors.js')
 const client = require('./dataBase.js')
 
 
-server.get('/location', (req, res) => {
+function locationhandler  (req, res)  {
     // const geoData = require('./data/geo.json');
     const city = req.query.city;
 
@@ -23,21 +22,21 @@ server.get('/location', (req, res) => {
                 superagent.get(url)
                     .then(geoData => {
                         // console.log('wwwwwwwwwwwwwwwwww', geoData)
-                        const locationData = new allConstrctor.Location(city, geoData.body);
+                        const locationData = new Location(city, geoData.body);
                         let sql = 'INSERT INTO locationdata (search_query, formatted_query,latitude,longitude) VALUES ($1,$2,$3,$4)'
                         let safeValue = [locationData.search_query, locationData.formatted_query, locationData.latitude, locationData.longitude];
                         client.query(sql, safeValue);
                         res.send(locationData);
-                        allHelper.onErorr();
+                        // onErorr();
                     });
             }
         })
-})
+    }
 
 //// Loction constrctor 
 
 
-allConstrctor.Location = function (city, geoData) {
+function Location (city, geoData) {
     this.search_query = city;
     this.formatted_query = geoData[0].display_name;
     this.latitude = geoData[0].lat;
@@ -45,11 +44,10 @@ allConstrctor.Location = function (city, geoData) {
 
 }
 
+//// locationhandler export to server.js 
 
+ module.exports= locationhandler;
 
+ //// on error emport to location.js 
 
-
-
-
-
-
+//  const onErorr = require('./server.js')
