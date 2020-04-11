@@ -46,5 +46,5 @@ function trailshandler (req, res)  {
 
 module.exports = trailshandler;
 
- //// on error emport to Trails.js 
+ // on error emport to Trails.js 
 //  const onErorr = require('./server.js')
